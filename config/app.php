@@ -1,7 +1,6 @@
 <?php
 
 return [
-
     /*
     |--------------------------------------------------------------------------
     | Application Name
@@ -12,8 +11,7 @@ return [
     | other UI elements where an application name needs to be displayed.
     |
     */
-
-    'name' => env('APP_NAME', 'Laravel'),
+    'name' => env('APP_NAME', 'Laravela'),
 
     /*
     |--------------------------------------------------------------------------
@@ -100,9 +98,7 @@ return [
     'key' => env('APP_KEY'),
 
     'previous_keys' => [
-        ...array_filter(
-            explode(',', (string) env('APP_PREVIOUS_KEYS', ''))
-        ),
+        ...array_filter(explode(',', (string) env('APP_PREVIOUS_KEYS', ''))),
     ],
 
     /*
@@ -122,5 +118,4 @@ return [
         'driver' => env('APP_MAINTENANCE_DRIVER', 'file'),
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
-
 ];

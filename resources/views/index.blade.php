@@ -82,7 +82,7 @@
         <div class="container mx-auto px-4">
             <h2 class="text-3xl font-bold text-center text-gray-800 mb-10">Produk Unggulan</h2>
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
-                {{-- 
+                {{--
                 Contoh penggunaan data produk:
                 @foreach($products as $product)
                     <div class="col-md-4 mb-4">
