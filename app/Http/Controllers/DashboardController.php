@@ -1,104 +1,48 @@
 <?php
+// app/Http/Controllers/DashboardController.php
 
 namespace App\Http\Controllers;
 
 use App\Models\Product;
-use App\Models\Account;
-use App\Models\ViewModel; // atau nama model Anda
-use App\Models\Sale;
+use App\Models\User;
 use Illuminate\Http\Request;
+
 class DashboardController extends Controller
 {
+    /**
+     * Display the admin dashboard.
+     */
     public function dashboard()
     {
-        $today = Carbon::today();
-        $monthStart = Carbon::now()->startOfMonth();
+        // Statistik untuk dashboard
+        $totalProducts = Product::count();
+        $totalStock = Product::sum('stock');
+        $lowStockProducts = Product::where('stock', '<', 10)->count();
+        $outOfStockProducts = Product::where('stock', '<=', 0)->count();
 
-        // Statistik Penjualan
-        $totalSalesToday = Order::whereDate('created_at', $today)
-            ->where('status', 'completed')
-            ->sum('total');
+        // Data produk untuk ditampilkan di tabel
+        $products = Product::latest()->paginate(10);
 
-        $totalSalesMonth = Order::whereBetween('created_at', [
-            $monthStart,
-            Carbon::now(),
-        ])
-            ->where('status', 'completed')
-            ->sum('total');
-
-        // Laba Kotor dan Bersih
-        $grossProfit = $this->calculateGrossProfit($monthStart);
-        $netProfit = $this->calculateNetProfit($monthStart);
-
-        // Produk Stok Rendah
-        $lowStockProducts = Product::where('stock', '<', 10)
-            ->where('is_active', true)
+        // Produk dengan stok menipis (untuk notifikasi)
+        $criticalStockProducts = Product::where('stock', '<', 5)
+            ->latest()
             ->take(5)
             ->get();
 
-        // Chart Data
-        $salesChartData = $this->getSalesChartData();
+        // 5 produk terbaru
+        $recentProducts = Product::latest()->take(5)->get();
 
         return view(
             'admin.dashboard',
             compact(
-                'totalSalesToday',
-                'totalSalesMonth',
-                'grossProfit',
-                'netProfit',
+                'totalProducts',
+                'totalStock',
                 'lowStockProducts',
-                'salesChartData',
+                'outOfStockProducts',
+                'products',
+                'criticalStockProducts',
+                'recentProducts',
             ),
         );
-    }
-
-    private function calculateGrossProfit($startDate)
-    {
-        $orders = Order::where('status', 'completed')
-            ->where('created_at', '>=', $startDate)
-            ->with('items')
-            ->get();
-
-        $revenue = $orders->sum('total');
-        $cogs = 0; // Cost of Goods Sold
-
-        foreach ($orders as $order) {
-            foreach ($order->items as $item) {
-                $cogs += $item->cost_price * $item->quantity;
-            }
-        }
-
-        return $revenue - $cogs;
-    }
-
-    private function calculateNetProfit($startDate)
-    {
-        $grossProfit = $this->calculateGrossProfit($startDate);
-        $expenses = Expense::where('date', '>=', $startDate)->sum('amount');
-
-        return $grossProfit - $expenses;
-    }
-
-    private function getSalesChartData()
-    {
-        $dates = collect();
-        $sales = collect();
-
-        for ($i = 6; $i >= 0; $i--) {
-            $date = Carbon::now()->subMonths($i);
-            $dates->push($date->format('M Y'));
-
-            $monthSales = Order::whereMonth('created_at', $date->month)
-                ->whereYear('created_at', $date->year)
-                ->where('status', 'completed')
-                ->sum('total');
-
-            $sales->push($monthSales);
-        }
-
-        return [
-            'labels' => $dates,
-            'data' => $sales,
-        ];
     }
 }

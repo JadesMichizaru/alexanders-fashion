@@ -20,6 +20,7 @@
     },
     "dependencies": {
         "apexcharts": "^3.46.0",
-        "chart.js": "^4.5.1"
+        "chart.js": "^4.5.1",
+        "tailwindcss-animated": "^2.0.0"
     }
 }

@@ -1,17 +1,28 @@
 <?php
+// app/Http/Controllers/ProductController.php
 
 namespace App\Http\Controllers;
 
+use App\Models\Product;
+use App\Http\Requests\ProductRequest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+
 class ProductController extends Controller
 {
+    /**
+     * Display a listing of the products.
+     */
     public function index()
     {
-        $products = Product::withCount('orderItems')->latest()->paginate(10);
-
+        $products = Product::latest()->paginate(10);
         return view('admin.products.index', compact('products'));
     }
 
+    /**
+     * Show the form for creating a new product.
+     */
     public function create()
     {
         $categories = ['Baju', 'Celana', 'Jaket', 'Aksesoris'];
@@ -24,6 +35,9 @@ class ProductController extends Controller
         );
     }
 
+    /**
+     * Store a newly created product in storage.
+     */
     public function store(ProductRequest $request)
     {
         $data = $request->validated();
@@ -43,6 +57,9 @@ class ProductController extends Controller
             ->with('success', 'Produk berhasil ditambahkan');
     }
 
+    /**
+     * Show the form for editing the specified product.
+     */
     public function edit(Product $product)
     {
         $categories = ['Baju', 'Celana', 'Jaket', 'Aksesoris'];
@@ -55,6 +72,9 @@ class ProductController extends Controller
         );
     }
 
+    /**
+     * Update the specified product in storage.
+     */
     public function update(ProductRequest $request, Product $product)
     {
         $data = $request->validated();
@@ -69,7 +89,6 @@ class ProductController extends Controller
         }
 
         $data['slug'] = Str::slug($request->name);
-
         $product->update($data);
 
         return redirect()
@@ -77,6 +96,26 @@ class ProductController extends Controller
             ->with('success', 'Produk berhasil diupdate');
     }
 
+    /**
+     * Remove the specified product from storage.
+     */
+    public function destroy(Product $product)
+    {
+        // Hapus image jika ada
+        if ($product->image) {
+            Storage::disk('public')->delete($product->image);
+        }
+
+        $product->delete();
+
+        return redirect()
+            ->route('admin.products.index')
+            ->with('success', 'Produk berhasil dihapus');
+    }
+
+    /**
+     * Generate unique SKU for product.
+     */
     private function generateSKU($category)
     {
         $prefix = strtoupper(substr($category, 0, 3));

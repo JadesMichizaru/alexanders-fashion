@@ -7,7 +7,8 @@
     <title>Dashboard - {{ config('app.name') }}</title>
 
     <!-- Tailwind CSS via CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="{{ asset('tailwind.config.js') }}"></script>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <!-- Font Awesome untuk icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -35,6 +36,10 @@
                 <a href="#" class="flex items-center px-4 py-3 bg-indigo-900 rounded-lg text-white">
                     <i class="fas fa-home w-5 h-5 mr-3"></i>
                     <span>Dashboard</span>
+                </a>
+                <a href="{{ route('index') }}" class="flex items-center px-4 py-3 text-indigo-100 hover:bg-indigo-700 rounded-lg transition">
+                    <i class="fas fa-globe w-5 h-5 mr-3"></i>
+                    <span>Demo Website</span>
                 </a>
                 <a href="#" class="flex items-center px-4 py-3 text-indigo-100 hover:bg-indigo-700 rounded-lg transition">
                     <i class="fas fa-box w-5 h-5 mr-3"></i>
@@ -84,6 +89,7 @@
                 <p class="text-gray-600 mt-1">Here's what's happening with your store today.</p>
             </div>
 
+            @foreach($products as $product)
             <!-- Stats Cards Grid -->
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
                 <!-- Total Stock Card -->
@@ -91,7 +97,7 @@
                     <div class="flex justify-between items-start">
                         <div>
                             <p class="text-gray-500 text-sm font-medium uppercase">Total Stock</p>
-                            <p class="text-3xl font-bold text-gray-800 mt-2">{{ $totalStock ?? 0 }}</p>
+                            <p class="text-3xl font-bold text-gray-800 mt-2">{{ $product->stock }}</p>
                             <p class="text-green-500 text-sm mt-2">
                                 <i class="fas fa-arrow-up mr-1"></i> +2.5% from last month
                             </p>
@@ -101,22 +107,8 @@
                         </div>
                     </div>
                 </div>
+                @endforeach
 
-                <!-- Total Accounts Card -->
-                <div class="bg-white rounded-xl shadow-md p-6 border-l-4 border-green-500 hover:shadow-lg transition">
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <p class="text-gray-500 text-sm font-medium uppercase">Total Accounts</p>
-                            <p class="text-3xl font-bold text-gray-800 mt-2">{{ $users_id ?? 0 }}</p>
-                            <p class="text-green-500 text-sm mt-2">
-                                <i class="fas fa-arrow-up mr-1"></i> +5 new this week
-                            </p>
-                        </div>
-                        <div class="bg-green-100 p-3 rounded-lg">
-                            <i class="fas fa-users text-green-600 text-2xl"></i>
-                        </div>
-                    </div>
-                </div>
 
                 <!-- Total Views Card -->
                 <div class="bg-white rounded-xl shadow-md p-6 border-l-4 border-purple-500 hover:shadow-lg transition">
