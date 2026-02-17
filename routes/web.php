@@ -46,13 +46,34 @@ Route::middleware(['auth'])->group(function () {
     Route::prefix('profile')
         ->name('profile.')
         ->group(function () {
-            Route::get('/', [ProfileController::class, 'edit'])->name('edit');
-            Route::patch('/', [ProfileController::class, 'update'])->name(
+            // Halaman utama profile (menggunakan view admin.pages.profile)
+            Route::get('/', [ProfileController::class, 'profile'])->name(
+                'index',
+            );
+
+            // Halaman edit profile
+            Route::get('/edit', [ProfileController::class, 'edit'])->name(
+                'edit',
+            );
+            Route::patch('/update', [ProfileController::class, 'update'])->name(
                 'update',
             );
-            Route::delete('/', [ProfileController::class, 'destroy'])->name(
+
+            // Halaman change password
+            Route::get('/change-password', [
+                ProfileController::class,
+                'changePassword',
+            ])->name('change-password');
+            Route::post('/change-password', [
+                ProfileController::class,
+                'updatePassword',
+            ])->name('change-password.update');
+
+            // Delete account
+            Route::delete('/delete', [
+                ProfileController::class,
                 'destroy',
-            );
+            ])->name('destroy');
         });
 
     // Admin Routes (dengan prefix admin)

@@ -1,85 +1,9 @@
-<!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Dashboard - {{ config('app.name') }}</title>
 
-    <!-- Tailwind CSS via CDN -->
-    <script src="{{ asset('tailwind.config.js') }}"></script>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-
-    <!-- Font Awesome untuk icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-        }
-    </style>
-</head>
+@include('admin.layouts.home')
 <body class="bg-gray-100">
 
     <div class="min-h-screen flex">
-        <!-- Sidebar -->
-        <aside class="bg-indigo-800 text-white w-64 py-6 px-4 hidden md:block">
-            <div class="mb-8 px-4">
-                <h1 class="text-2xl font-bold">Dashboard</h1>
-                <p class="text-indigo-200 text-sm mt-1">v1.0.0</p>
-            </div>
-
-            <nav class="space-y-1">
-                <a href="#" class="flex items-center px-4 py-3 bg-indigo-900 rounded-lg text-white">
-                    <i class="fas fa-home w-5 h-5 mr-3"></i>
-                    <span>Dashboard</span>
-                </a>
-                <a href="{{ route('index') }}" class="flex items-center px-4 py-3 text-indigo-100 hover:bg-indigo-700 rounded-lg transition">
-                    <i class="fas fa-globe w-5 h-5 mr-3"></i>
-                    <span>Demo Website</span>
-                </a>
-                <a href="#" class="flex items-center px-4 py-3 text-indigo-100 hover:bg-indigo-700 rounded-lg transition">
-                    <i class="fas fa-box w-5 h-5 mr-3"></i>
-                    <span>Products</span>
-                </a>
-                <a href="#" class="flex items-center px-4 py-3 text-indigo-100 hover:bg-indigo-700 rounded-lg transition">
-                    <i class="fas fa-users w-5 h-5 mr-3"></i>
-                    <span>Accounts</span>
-                </a>
-                <a href="#" class="flex items-center px-4 py-3 text-indigo-100 hover:bg-indigo-700 rounded-lg transition">
-                    <i class="fas fa-chart-bar w-5 h-5 mr-3"></i>
-                    <span>Views</span>
-                </a>
-                <a href="#" class="flex items-center px-4 py-3 text-indigo-100 hover:bg-indigo-700 rounded-lg transition">
-                    <i class="fas fa-shopping-cart w-5 h-5 mr-3"></i>
-                    <span>Sales</span>
-                </a>
-                <form method="POST" action="{{ route('logout') }}">
-                    @csrf
-
-                    <button type="submit" class="text-red-600 hover:text-red-800 transition duration-150 ease-in-out font-medium">Logout</button>
-
-                </form>
-
-            </nav>
-
-            <div class="absolute bottom-0 left-0 w-64 p-4">
-                <div class="bg-indigo-900 rounded-lg p-4">
-                    <p class="text-xs text-indigo-200">Logged in as:</p>
-                    <p class="font-medium text-sm truncate">{{ Auth::user()->name }}</p>
-                </div>
-            </div>
-        </aside>
-
-        <!-- Mobile menu button (hidden on desktop) -->
-        <div class="md:hidden fixed top-0 left-0 p-4 z-10">
-            <button class="text-gray-600 focus:outline-none" onclick="toggleSidebar()">
-                <i class="fas fa-bars text-2xl"></i>
-            </button>
-        </div>
+     @include('admin.layouts.navbar')
 
         <!-- Main Content -->
         <main class="flex-1 p-4 md:p-8">
@@ -89,15 +13,31 @@
                 <p class="text-gray-600 mt-1">Here's what's happening with your store today.</p>
             </div>
 
-            @foreach($products as $product)
+
+
             <!-- Stats Cards Grid -->
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white rounded-xl shadow-md p-6 border-l-4 border-green-500 hover:shadow-lg animate-fade-up">
+                     <div class="flex justify-between items-start">
+                         <div>
+                             <p class="text-gray-500 text-sm font-medium uppercase">Total Accounts</p>
+                             <p class="text-3xl font-bold text-gray-800 mt-2">{{ $totalAccounts }}</p>
+                             <p class="text-green-500 text-sm mt-2">
+                                 <i class="fas fa-arrow-up mr-1"></i> +5 new this week
+                             </p>
+                         </div>
+                         <div class="bg-green-100 p-3 rounded-lg">
+                             <i class="fas fa-users text-green-600 text-2xl"></i>
+                         </div>
+                     </div>
+                 </div>
+
                 <!-- Total Stock Card -->
-                <div class="bg-white rounded-xl shadow-md p-6 border-l-4 border-blue-500 hover:shadow-lg transition">
+                <div class="bg-white rounded-xl shadow-md p-6 border-l-4 border-blue-500 hover:shadow-lg transition animate-fade-up">
                     <div class="flex justify-between items-start">
                         <div>
                             <p class="text-gray-500 text-sm font-medium uppercase">Total Stock</p>
-                            <p class="text-3xl font-bold text-gray-800 mt-2">{{ $product->stock }}</p>
+                            <p class="text-3xl font-bold text-gray-800 mt-2">{{ $totalStock }}</</p>
                             <p class="text-green-500 text-sm mt-2">
                                 <i class="fas fa-arrow-up mr-1"></i> +2.5% from last month
                             </p>
@@ -107,11 +47,10 @@
                         </div>
                     </div>
                 </div>
-                @endforeach
 
 
                 <!-- Total Views Card -->
-                <div class="bg-white rounded-xl shadow-md p-6 border-l-4 border-purple-500 hover:shadow-lg transition">
+                <div class="bg-white rounded-xl shadow-md p-6 border-l-4 border-purple-500 hover:shadow-lg transition animate-fade-up">
                     <div class="flex justify-between items-start">
                         <div>
                             <p class="text-gray-500 text-sm font-medium uppercase">Total Views</p>
@@ -127,7 +66,7 @@
                 </div>
 
                 <!-- Sales This Month Card -->
-                <div class="bg-white rounded-xl shadow-md p-6 border-l-4 border-yellow-500 hover:shadow-lg transition">
+                <div class="bg-white rounded-xl shadow-md p-6 border-l-4 border-yellow-500 hover:shadow-lg transition animate-fade-up">
                     <div class="flex justify-between items-start">
                         <div>
                             <p class="text-gray-500 text-sm font-medium uppercase">Sales This Month</p>
@@ -259,10 +198,7 @@
                 </div>
             </div>
 
-            <!-- Footer -->
-            <div class="mt-8 text-center text-gray-500 text-sm">
-                <p>&copy; {{ date('Y') }} {{ config('app.name') }}. All rights reserved.</p>
-            </div>
+            @include('admin.layouts.footer')
         </main>
     </div>
 

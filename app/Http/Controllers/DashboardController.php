@@ -19,6 +19,7 @@ class DashboardController extends Controller
         $totalStock = Product::sum('stock');
         $lowStockProducts = Product::where('stock', '<', 10)->count();
         $outOfStockProducts = Product::where('stock', '<=', 0)->count();
+        $totalAccounts = User::count();
 
         // Data produk untuk ditampilkan di tabel
         $products = Product::latest()->paginate(10);
@@ -42,6 +43,7 @@ class DashboardController extends Controller
                 'products',
                 'criticalStockProducts',
                 'recentProducts',
+                'totalAccounts',
             ),
         );
     }
